@@ -4,12 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#101827">
-  <title>股票雷達｜商品名稱＋技術指標 V7</title>
+  <title>股票雷達 V9｜手機精簡版</title>
   <style>
     :root{color-scheme:dark;--bg:#101827;--panel:#1b2940;--panel2:#132138;--line:#34435a;--text:#edf3ff;--muted:#adbed6;--red:#ff8895;--green:#64dac2;--blue:#8ab7ff;--yellow:#f8d781}
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Noto Sans TC",sans-serif}
-    .wrap{max-width:860px;padding:16px 13px 35px;margin:0 auto}
+    .wrap{width:100%;max-width:860px;min-width:0;padding:16px 13px 35px;margin:0 auto}
+    /* 防止小螢幕因內容撐寬而出現整頁左右捲動；保留瀏覽器正常縮放。 */
+    html,body{max-width:100%;overflow-x:clip}
+    .card,.chart-frame{min-width:0;max-width:100%}
+    .row>*{max-width:100%}
     h1{font-size:24px;margin:4px 0 2px}h2{font-size:17px;margin:0 0 9px}
     p{margin:7px 0;color:var(--muted)}
     .sub{font-size:13px}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px;margin-top:12px}
@@ -19,6 +23,8 @@
     button.active{background:#5b67dd;border-color:#9ba5ff;color:white}
     button:disabled{opacity:.55;cursor:wait}button:focus-visible,input:focus-visible,canvas:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
     input[type=text],input[type=number]{background:#101d32;color:var(--text);padding:8px;width:118px;max-width:100%}
+    /* 輸入欄不小於 16px，可避免部分手機在聚焦時自動放大。 */
+    input[type=text]{font-size:16px}
     input[type=file]{width:100%;max-width:100%;font-size:13px}
     label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:3px}
     .check{display:inline-flex;flex-direction:row;align-items:center;gap:6px;padding:5px 3px}
@@ -75,6 +81,84 @@
     .good{color:#86e6b6}.warn{color:#ffd18f}.bad{color:#ff9eaa}
     footer{font-size:12px;color:var(--muted);padding-top:12px}
     @media (max-width:390px){.wrap{padding:10px 8px 20px}.card{padding:10px}.inspect-grid .item .val{font-size:15px}.metric strong{font-size:15px}#chart{height:310px}.buttons button{padding:7px 8px}}
+
+    /* V9 手機精簡版：節省上下空間，不限制瀏覽器雙指縮放。 */
+    .wrap{padding-top:10px;padding-bottom:20px}
+    h1{font-size:22px;margin:0 0 1px}
+    h2{font-size:16px;margin:0 0 5px;line-height:1.35}
+    .wrap>.sub{margin:0 0 6px;line-height:1.3}
+    .card{padding:10px 11px;margin-top:8px;border-radius:12px}
+    button,input{min-height:36px}
+    button{padding:6px 10px}
+    .field-product{padding:5px 8px;margin-top:6px;font-size:13px}
+    .livebar{margin:6px 0;padding:5px 8px;gap:6px;border-radius:8px}
+    .live-control{font-size:13px}
+    .live-control input{width:17px;height:17px}
+    .live-state{font-size:12px}
+    .status{font-size:12px;line-height:1.35;padding:5px 8px;margin:6px 0}
+    .quote-title{gap:2px 9px;line-height:1.35}
+    .quote-title .name{font-size:17px}
+    .quote-title .sub{font-size:11px;margin:0}
+    .metrics{gap:5px;margin-top:5px}
+    .metric{padding:5px 7px;border-radius:8px}
+    .metric span{font-size:11px}
+    .metric strong{font-size:15px;line-height:1.35}
+    #quoteChange{font-size:13px;line-height:1.25}
+    .instrument-id{margin:3px 0 0;padding:5px 7px;gap:5px;border-radius:7px}
+    .instrument-id strong{font-size:15px}
+    .instrument-code{font-size:12px;padding:1px 6px}
+    .instrument-tag{font-size:11px}
+    #tabs{margin:6px 0 5px;gap:5px}
+    #tabs button{min-height:34px;padding:5px 2px;font-size:13px}
+    .technical-controls{display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;padding:0 1px;margin:1px 0 4px}
+    .ma-switches{display:flex;gap:2px 6px;align-items:center;flex-wrap:wrap}
+    .check{font-size:12px;gap:3px;padding:2px 1px;white-space:nowrap}
+    .check input{width:15px;height:15px}
+    .indicator-switches{border:0;padding:0;margin:0;gap:8px}
+    .indicator-switches .check{font-size:12px}
+    .inspector{padding:6px 8px;margin:5px 0;border-radius:8px}
+    .inspector .instrument-selected{display:none} /* 商品名稱已在上方顯示 */
+    .inspector-head{font-size:12px;line-height:1.3;gap:3px 8px;flex-wrap:wrap}
+    .inspector-head span:last-child{font-size:11px}
+    .inspect-grid{gap:4px 8px;margin-top:5px}
+    .inspect-grid .item .key{font-size:11px}
+    .inspect-grid .item .val{font-size:14px;line-height:1.35}
+    .signal-note{padding:6px 8px;margin:5px 0;font-size:12px;line-height:1.45}
+    .chart-guide{margin:2px 0 4px;font-size:12px;line-height:1.3}
+    .indicator-readings{gap:5px 10px;font-size:11px;margin:2px 0 5px;line-height:1.3}
+    .compact-details{margin:4px 0;font-size:12px;color:var(--muted)}
+    .compact-details>summary{font-size:12px;font-weight:550;line-height:1.4;cursor:pointer;padding:2px 0;list-style-position:inside}
+    .compact-details>summary::marker{color:var(--yellow)}
+    .compact-details[open]{margin-bottom:7px}
+    .compact-details p{font-size:12px;line-height:1.5;margin:4px 0}
+    .compact-details .metrics{margin-top:5px}
+    .compact-details .legend{margin:5px 0}
+    .live-extra{margin-left:auto;margin-top:0}
+    .live-extra>summary{white-space:nowrap;font-size:11px}
+    .live-extra .live-info{padding:3px 0;max-width:100%;font-size:11px;line-height:1.45;overflow-wrap:anywhere}
+    .quote-extra .metric strong{font-size:13px}
+    .buttons{margin:6px 0}
+    .buttons button{min-height:34px;padding:5px 8px}
+    /* 僅壓縮空白，股價與K線顯示仍保持可讀和可觸控。 */
+    @media (max-width:560px){
+      .wrap{padding:8px 8px 18px}
+      .card{padding:8px 9px;margin-top:7px}
+      h1{font-size:20px}
+      .quote-title .sub{flex-basis:100%}
+      .quote-title .name{font-size:16px}
+      .technical-controls{gap:3px 8px}
+      .ma-switches{width:100%;justify-content:space-between}
+      .indicator-switches{width:100%;justify-content:flex-start}
+      .inspect-grid .item .val{font-size:13px}
+    }
+    @media (max-width:360px){
+      .metrics{gap:4px}
+      .metric{padding:5px 4px}
+      .metric strong{font-size:13px}
+      #quoteChange{font-size:12px}
+      .ma-switches{gap:1px}
+      .check{font-size:11px}
+    }
   </style>
 </head>
 <body>
@@ -88,11 +172,11 @@
         <button id="refresh" title="重新抓取目前週期的資料">↻ 手動重試</button>
       </div>
       <div class="field-product" id="fieldProductName" aria-live="polite">目前商品：友達（2409）</div>
-      <p class="sub" id="searchHint">可輸入中文名稱或代號，例如「潤泰新」或「9945」。中文未收錄時請改用代號。</p>
+      <details class="compact-details"><summary>搜尋提示</summary><p id="searchHint">可輸入中文名稱或代號，例如「潤泰新」或「9945」。中文未收錄時請改用代號。此裝置會記住最後查詢的股票。</p></details>
       <div class="livebar">
         <label class="live-control"><input id="autoLive" type="checkbox" checked>🟢 自動更新</label>
         <span class="live-state" id="liveState">啟動中…</span>
-        <div class="live-info" id="liveInfo" style="width:100%">交易時段：報價每 5 秒、分鐘 K 每 10 秒查詢。實際行情以資料時間為準。</div>
+        <details class="compact-details live-extra"><summary>更新資訊</summary><div class="live-info" id="liveInfo">交易時段：報價每 5 秒、分鐘 K 每 10 秒查詢。實際行情以資料時間為準。</div></details>
       </div>
       <div class="status" id="status" role="status" aria-live="polite">正在準備連接資料…</div>
       <div class="quote-title"><span class="name" id="stockName">友達 2409</span><span class="sub" id="quoteTime">報價時間：—</span></div>
@@ -103,14 +187,18 @@
         <div class="metric"><span>當日最高</span><strong id="dayHigh">—</strong></div>
         <div class="metric"><span>當日最低</span><strong id="dayLow">—</strong></div>
         <div class="metric"><span>現股當沖</span><strong id="dayTrade">—</strong></div>
-        <div class="metric"><span>今日漲停</span><strong id="limitUp" class="up">—</strong></div>
-        <div class="metric"><span>今日跌停</span><strong id="limitDown" class="down">—</strong></div>
-        <div class="metric"><span>報價日期</span><strong id="quoteDate" style="font-size:14px">—</strong></div>
       </div>
-      <p class="sub">漲跌停價來自富果 ticker API。上面「報價時間」是行情時間，更新狀態的「取得時間」是手機取得時間，兩者不同；收盤後不會持續產生新成交價。</p>
+      <details class="compact-details quote-extra"><summary>更多行情：漲停、跌停、報價日期</summary>
+        <div class="metrics">
+          <div class="metric"><span>今日漲停</span><strong id="limitUp" class="up">—</strong></div>
+          <div class="metric"><span>今日跌停</span><strong id="limitDown" class="down">—</strong></div>
+          <div class="metric"><span>報價日期</span><strong id="quoteDate">—</strong></div>
+        </div>
+        <p>漲跌停價來自富果 ticker API；報價時間是行情時間，取得時間是手機取得時間；收盤後不會持續產生新成交價。</p>
+      </details>
     </section>
     <section class="card">
-      <h2>📊 真實 K 線圖 <small style="font-size:12px;color:var(--yellow);font-weight:500">V9｜中文名稱／代號查詢＋MA＋MACD＋RSI</small></h2>
+      <h2>📊 K 線圖 <small style="font-size:12px;color:var(--yellow);font-weight:500">V9｜MA · MACD · RSI</small></h2>
       <div class="instrument-id" aria-live="polite">
         <span class="instrument-tag">觀察商品</span>
         <strong id="chartProductName">友達</strong>
@@ -119,18 +207,17 @@
       <div id="tabs" aria-label="選擇 K 線週期">
         <button class="active" data-t="D" aria-pressed="true">日 K</button><button data-t="15" aria-pressed="false">15 分</button><button data-t="5" aria-pressed="false">5 分</button><button data-t="1" aria-pressed="false">1 分</button>
       </div>
-      <div class="row" style="margin-bottom:9px">
+      <div class="technical-controls"><div class="ma-switches">
         <label class="check"><input type="checkbox" id="ma5" checked>MA5</label>
         <label class="check"><input type="checkbox" id="ma10" checked>MA10</label>
         <label class="check"><input type="checkbox" id="ma20" checked>MA20</label>
         <label class="check"><input type="checkbox" id="ma30">MA30</label>
         <label class="check"><input type="checkbox" id="ma60">MA60</label>
       </div>
-      <div class="legend"><span><i style="background:#f28b95"></i>紅漲</span><span><i style="background:#69d4bf"></i>綠跌</span><span><i style="background:#f8d781"></i>MA5</span><span><i style="background:#7fb7ff"></i>MA10</span><span><i style="background:#bc98ff"></i>MA20</span><span><i style="background:#ffae66"></i>MA30</span><span><i style="background:#7ce2b2"></i>MA60</span></div>
       <div class="indicator-switches">
-        <label class="check"><input type="checkbox" id="showMacd" checked> 顯示 MACD（12,26,9）</label>
-        <label class="check"><input type="checkbox" id="showRsi" checked> 顯示 RSI（14）</label>
-      </div>
+        <label class="check"><input type="checkbox" id="showMacd" checked> MACD（12,26,9）</label>
+        <label class="check"><input type="checkbox" id="showRsi" checked> RSI（14）</label>
+      </div></div>
       <div class="inspector" aria-live="polite">
         <div class="instrument-selected" id="selectedProductName">友達（2409）</div>
         <div class="inspector-head"><span id="selectedDate">選擇一根 K 棒</span><span id="selectedTf">點一下可固定游標</span></div>
@@ -142,13 +229,17 @@
           <div class="item"><span class="key" id="selDiffLabel">漲跌幅</span><span class="val" id="selDiff">—</span></div>
           <div class="item"><span class="key" id="selVolumeLabel">成交量</span><span class="val" id="selVolume">—</span></div>
         </div>
-        <div class="inspector-note" id="selLimits">所選 K 棒的最高／最低就在上方；漲跌停價只適用於目前 ticker 日期。</div>
+        <details class="compact-details"><summary>K 棒價位說明</summary><div class="inspector-note" id="selLimits">所選 K 棒的最高／最低就在上方；漲跌停價只適用於目前 ticker 日期。</div></details>
       </div>
-      <p class="sub" style="margin:8px 0 6px">點選 K 棒：圖上顯示 <b style="color:var(--yellow)">日期／時間</b> 和 <b style="color:var(--yellow)">游標價位</b>；長按左右滑可查任一根 K 棒。</p><div class="legend" style="margin:6px 0 8px">
-        <span id="macdLegend"><i style="background:#ffd166"></i>DIF（黃）／<i style="background:#8ab7ff"></i>MACD訊號線（藍）／柱體</span>
-        <span id="rsiLegend"><i style="background:#7ce2b2"></i>RSI14</span>
-        <span id="macdInfo">MACD：—</span><span id="rsiInfo">RSI：—</span>
-      </div>
+      <div class="legend indicator-readings"><span id="macdInfo">MACD：—</span><span id="rsiInfo">RSI：—</span></div>
+      <details class="compact-details"><summary>圖表操作／指標線說明</summary>
+        <p>點選 K 棒查看日期、時間與游標價位；長按左右滑動查看其他 K 棒。</p>
+        <div class="legend"><span><i style="background:#f28b95"></i>紅漲</span><span><i style="background:#69d4bf"></i>綠跌</span><span><i style="background:#f8d781"></i>MA5</span><span><i style="background:#7fb7ff"></i>MA10</span><span><i style="background:#bc98ff"></i>MA20</span><span><i style="background:#ffae66"></i>MA30</span><span><i style="background:#7ce2b2"></i>MA60</span></div>
+        <div class="legend">
+          <span id="macdLegend"><i style="background:#ffd166"></i>DIF（黃）／<i style="background:#8ab7ff"></i>MACD訊號線（藍）／柱體</span>
+          <span id="rsiLegend"><i style="background:#7ce2b2"></i>RSI14</span>
+        </div>
+      </details>
       <div class="signal-note" id="crossNotice" aria-live="polite">MACD 交叉提示：待載入 K 線資料。</div>
       <div class="chart-frame">
         <canvas id="chart" aria-label="K 線圖：點一下選擇，長按後左右滑動查看" tabindex="0"></canvas>
@@ -156,8 +247,10 @@
         <canvas id="macd" aria-label="MACD 指標圖，與上方十字游標同步"></canvas>
         <canvas id="rsi" aria-label="RSI 指標圖，與上方十字游標同步"></canvas>
       </div>
-      <p class="sub" style="margin:7px 0 0">MACD 交叉指 DIF 穿越訊號線，僅提供技術觀察，不是買賣指令。形成中的 K 棒訊號可能消失。</p>
-      <p class="sub" style="margin:4px 0 0">游標價位是十字橫線指向的位置；上方「收盤」則是該根 K 棒的實際收盤價，兩者不一定相同。</p><div class="buttons"><button id="older" type="button">◀ 看較早</button><span class="hint">點選固定；長按左右滑動查價</span><button id="newer" type="button">看較新 ▶</button></div>
+      <details class="compact-details"><summary>MACD 與游標注意事項</summary>
+        <p>MACD 交叉指 DIF 穿越訊號線，僅供技術觀察，不是買賣指令；形成中的 K 棒訊號可能消失。</p>
+        <p>游標價位是十字橫線指向的位置；上方「收盤」是該根 K 棒的實際收盤價，兩者不一定相同。</p>
+      </details><div class="buttons"><button id="older" type="button">◀ 看較早</button><span class="hint">點選固定；長按左右滑動查價</span><button id="newer" type="button">看較新 ▶</button></div>
       <div class="row" style="justify-content:flex-end"><button id="follow" type="button">▶ 跟隨最新 K 棒</button></div>
       <div class="meta" id="details">尚未載入 K 線。</div>
     </section>
@@ -280,7 +373,18 @@ async function resolveSymbol(input){
   throw Error(`找不到「${raw}」的股票代號。部分中文名稱清單受網路限制；請改輸入股票代號。`);
 }
 
-const state = {symbol:'2409',tf:'D', data:{D:[],15:[],5:[],1:[]},source:{},selected:null,cursorPrice:null,end:{D:null,15:null,5:null,1:null},quote:null,ticker:null,loading:false,token:0, view:null, followLatest:true};
+// V9 記住最後查詢的股票。localStorage 若被停用（例如部分無痕模式），仍能正常開啟。
+const LAST_SYMBOL_KEY = 'stock-radar-v9-last-symbol';
+function restoreLastSymbol(){
+  try{
+    const symbol=String(localStorage.getItem(LAST_SYMBOL_KEY)||'').trim().toUpperCase();
+    return /^[0-9A-Z]{4,8}$/.test(symbol)?symbol:'2409';
+  }catch(_){return '2409';}
+}
+function rememberSymbol(symbol){
+  try{localStorage.setItem(LAST_SYMBOL_KEY,symbol);}catch(_){/* 儲存失敗不影響查價 */}
+}
+const state = {symbol:restoreLastSymbol(),tf:'D', data:{D:[],15:[],5:[],1:[]},source:{},selected:null,cursorPrice:null,end:{D:null,15:null,5:null,1:null},quote:null,ticker:null,loading:false,token:0, view:null, followLatest:true};
 const auto = {enabled:true, quoteBusy:false, barsBusy:false, tickerBusy:false, quoteAttempt:0, barsAttempt:0, quoteSuccess:0, barsSuccess:0, pausedUntil:0, lastError:''};
 const nf = new Intl.NumberFormat('zh-TW');
 function num(v){if(v==null||v==='')return NaN;return Number(String(v).replace(/,/g,''));}
@@ -411,6 +515,7 @@ async function loadCurrent({newSymbol=false}={}){
   }
   $('stock').value=symbol; // 查到名稱後，自動轉成代號供後端 API 使用。
   if(newSymbol||symbol!==state.symbol)resetForSymbol(symbol);
+  rememberSymbol(symbol); // 使用者確定查詢的代號，重新整理或重開時恢復。
   const token=++state.token;
   state.loading=true;setBusy(true);show(`正在載入 ${symbol} 的${state.tf==='D'?'日K':state.tf+'分K'}與報價…`);
   const tf=state.tf;
@@ -834,6 +939,7 @@ function calc(){
   $('info').innerHTML=`投入：${count(capital)} 元｜保留現金：${count(cashLeft)} 元<br>含成本預估停損：<b class="${risk>500?'bad':'good'}">${fmt(risk,0)} 元</b>（上限 500 元）<br>扣成本預估停利：<b>${fmt(profit,0)} 元</b>｜報酬風險比：${ratio}<br><span class="${risk<=500&&cashLeft>=15000?'good':'warn'}">${risk>500?'⚠️ 超過停損預算 500 元。 ':''}${cashLeft<15000?'⚠️ 未保留 15,000 元現金。 ':''}${risk<=500&&cashLeft>=15000?'符合資金與風控限制；仍需技術面確認。':''}</span>`;
 }
 $('calc').addEventListener('click',calc);
+$('stock').value=state.symbol; // 先恢復代號，再開始載入，避免 HTML 預設 2409 覆蓋使用者選擇。
 calc();displayTfs();showIndicatorVisibility();quoteDisplay();draw();updateLiveStatus();loadCurrent();
 </script>
 </body>
